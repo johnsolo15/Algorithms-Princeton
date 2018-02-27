@@ -15,7 +15,7 @@ public class FastCollinearPoints {
         segments = new ArrayList<LineSegment>();
         Point[] sortedPoints = Arrays.copyOf(points, points.length);
         ArrayList<Point> coPoints = new ArrayList<Point>();
-         
+
         for (int p = 0; p < points.length; p++) {
             Arrays.sort(sortedPoints, points[p].slopeOrder());
             
@@ -25,20 +25,29 @@ public class FastCollinearPoints {
                 }
                 if (coPoints.isEmpty()) {
                     coPoints.add(sortedPoints[q]);
-                } else if (points[p].slopeTo(sortedPoints[q]) == points[p].slopeTo(sortedPoints[q-1])) {
+                } else if (points[p].slopeTo(sortedPoints[q]) == points[p].slopeTo(sortedPoints[q - 1])) {
                     coPoints.add(sortedPoints[q]);
                 } else if (coPoints.size() >= 3) {
                     Collections.sort(coPoints);
-                    
-                    if (points[p].compareTo(coPoints.get(0)) == -1) {
-                        segments.add(new LineSegment(points[p], coPoints.get(coPoints.size()-1)));
+
+                    if (points[p].compareTo(coPoints.get(0)) < 0) {
+                        segments.add(new LineSegment(points[p], coPoints.get(coPoints.size() - 1)));
                     }
                     
                     coPoints.clear();
+                    coPoints.add(sortedPoints[q]);
                 } else {
                     coPoints.clear();
                     coPoints.add(sortedPoints[q]);
                 }
+            }
+            if (coPoints.size() >= 3) {
+                Collections.sort(coPoints);
+
+                if (points[p].compareTo(coPoints.get(0)) < 0) {
+                    segments.add(new LineSegment(points[p], coPoints.get(coPoints.size() - 1)));
+                }
+                coPoints.clear();
             }
         }
     }
