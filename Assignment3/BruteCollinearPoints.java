@@ -12,17 +12,20 @@ public class BruteCollinearPoints {
         segments = new ArrayList<LineSegment>();
         
         for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) throw new IllegalArgumentException();
             for (int j = 0; j < points.length; j++) {
-                if (j != i && points[i].compareTo(points[j]) == 0) {
-                    throw new IllegalArgumentException();
-                }
+                if (points[j] == null) throw new IllegalArgumentException();
+                if (j != i && points[i].compareTo(points[j]) == 0) throw new IllegalArgumentException();
                 for (int k = 0; k < points.length; k++) {
+                    if (points[k] == null) throw new IllegalArgumentException();
+                    if (points[i].slopeTo(points[j]) != points[i].slopeTo(points[k])) {
+                        continue;
+                    }
                     for (int m = 0; m < points.length; m++) {
-                        if (points[i] == null || points[j] == null || points[k] == null || points[m] == null) {
-                            throw new IllegalArgumentException();
-                        }
-                        if (isLineSegment(points[i],points[j],points[k],points[m])) {
-                            segments.add(new LineSegment(points[i],points[m]));
+                        if (points[m] == null) throw new IllegalArgumentException();
+                        
+                        if (isLineSegment(points[i], points[j], points[k], points[m])) {
+                            segments.add(new LineSegment(points[i], points[m]));
                         }
                     }
                 }
@@ -39,10 +42,7 @@ public class BruteCollinearPoints {
     }
     
     private boolean isLineSegment(Point a, Point b, Point c, Point d) {
-        if (a.slopeTo(b) == Double.NEGATIVE_INFINITY) {
-            return false;
-        }
-        if (a.compareTo(b) != -1 || b.compareTo(c) != -1 || c.compareTo(d) != -1) {
+        if (a.compareTo(b) > -1 || b.compareTo(c) > -1 || c.compareTo(d) > -1) {
             return false;
         }
         if (a.slopeTo(b) != a.slopeTo(c) || a.slopeTo(b) != a.slopeTo(d)) {
